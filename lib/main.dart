@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_nvs/1507flutter/basiccompo.dart';
+//import 'package:flutter_application_nvs/1507flutter/basiccompo.dart';
+//import 'package:flutter_application_nvs/1507flutter/columnexample.dart';
+//import 'package:flutter_application_nvs/1507flutter/textstyleexmp.dart';
+import'package:flutter_application_nvs/2207flutter/stopwatch.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,14 +14,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ContainerExample(),
-      // home: Scaffold(
-      //   body: Center(
-      //     child: Text('Hello World!'),
-      //   ),
-      // ),
-    );
+      home: Stopwatch(),
+      );
   }
 }
-

@@ -2,37 +2,43 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class Stopwatch extends StatefulWidget {
-  const Stopwatch({super.key});
+  var name, email;
+  Stopwatch({super.key, required this.name, required this.email});
 
   @override
   State<Stopwatch> createState() => _StopwatchState();
 }
 
 class _StopwatchState extends State<Stopwatch> {
-  int seconds = 0;
+  double seconds = 0;
   late Timer timer;
   bool isTicking = false;
+  int millis = 0;
+  final laps = <int>[];
+
   String _secondsTotext() => seconds <= 1 ? "Second" : "Seconds";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Stopwatch"),
+        title: Text(widget.name),
       ),
       body: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            "$seconds ${_secondsTotext()}",
-            style: Theme.of(context).textTheme.headlineSmall,
+          Expanded(
+            child: Text(
+              "$seconds ${_secondsTotext()}",
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
           ),
           const SizedBox(
             height: 10,
           ),
-          controlpanel(),
-          controlpanel1(),
+          Expanded(child: controlpanel()),
+          Expanded(child: builderDisplay()),
         ],
       )),
     );
@@ -65,13 +71,13 @@ class _StopwatchState extends State<Stopwatch> {
         const SizedBox(
           width: 10,
         ),
-        const ElevatedButton(
-          onPressed: null,
-          style: ButtonStyle(
+        ElevatedButton(
+          onPressed: _ontapLap,
+          style: const ButtonStyle(
             backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue),
             foregroundColor: MaterialStatePropertyAll<Color>(Colors.white),
           ),
-          child: Icon(Icons.timer),
+          child: const Icon(Icons.timer),
         ),
       ],
     );
@@ -113,10 +119,11 @@ class _StopwatchState extends State<Stopwatch> {
   void _startTimer() {
     timer = Timer.periodic(
         const Duration(
-          seconds: 1,
+          milliseconds: 100,
         ),
         _onTick);
     setState(() {
+      laps.clear();
       isTicking = true;
       seconds = 0;
     });
@@ -129,9 +136,46 @@ class _StopwatchState extends State<Stopwatch> {
     });
   }
 
+  void _ontapLap() {
+    setState(() {
+      laps.add(millis);
+      millis = 0;
+      seconds = 0;
+    });
+    print(laps);
+  }
+
+  Widget buildDisplay() {
+    return ListView(
+      children: [
+        for (int i in laps)
+          ListTile(
+            leading: const Icon(Icons.star),
+            title: Text("Lap  : ${i / 1000} seconds"),
+            trailing: const Icon(Icons.delete),
+          )
+      ],
+    );
+  }
+
+  Widget builderDisplay() {
+    return ListView.builder(
+      itemCount: laps.length,
+      itemBuilder: (context, index) {
+        final milis = laps[index];
+        return ListTile(
+          leading: const Icon(Icons.star),
+          title: Text("Lap  : ${milis / 1000} seconds"),
+          trailing: const Icon(Icons.cancel),
+        );
+      },
+    );
+  }
+
   void _onTick(Timer timer) {
     setState(() {
-      seconds++;
+      millis += 100;
+      seconds = millis / 1000;
     });
   }
 
